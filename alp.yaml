@@ -1,0 +1,7 @@
+---
+aggregates:
+- /icons/.+
+- /profile/.+
+- /channel/\d+
+- /history/\d+
+- /(js|css|fonts)/.+
