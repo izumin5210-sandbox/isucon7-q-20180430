@@ -1,11 +1,9 @@
 require './app'
 
-require ::File.expand_path('../config/environment',  __FILE__)
-
 is_stackprof         =  ENV['ENABLE_STACKPROF'].to_i.nonzero?
 stackprof_mode       = (ENV['STACKPROF_MODE']       || :wall).to_sym
 stackprof_interval   = (ENV['STACKPROF_INTERVAL']   || 1000).to_i
-stackprof_save_every = (ENV['STACKPROF_SAVE_EVERY'] || 1 ).to_i
+stackprof_save_every = (ENV['STACKPROF_SAVE_EVERY'] || 500 ).to_i
 stackprof_path       =  ENV['STACKPROF_PATH']       || 'tmp/stackprof/'
 use StackProf::Middleware, enabled:    is_stackprof,
                            mode:       stackprof_mode,

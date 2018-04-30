@@ -1,6 +1,7 @@
 require 'digest/sha1'
 require 'mysql2'
 require 'sinatra/base'
+require 'stackprof'
 
 class App < Sinatra::Base
   configure do
