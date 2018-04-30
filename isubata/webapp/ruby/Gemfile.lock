@@ -1,3 +1,10 @@
+GIT
+  remote: git://github.com/tmm1/stackprof.git
+  revision: 4b3396302a3d839eb3633e99b4a5e01afb59ad54
+  branch: master
+  specs:
+    stackprof (0.2.11)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -31,6 +38,7 @@ DEPENDENCIES
   puma
   sinatra
   sinatra-contrib
+  stackprof!
 
 BUNDLED WITH
-   1.13.7
+   1.16.1
