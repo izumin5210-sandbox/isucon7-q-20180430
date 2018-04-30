@@ -35,6 +35,8 @@ func handle(w http.ResponseWriter, req *http.Request) {
 	log.Printf("%s %s", req.Method, req.URL.Path)
 	switch req.Method {
 	case "GET":
+		w.Header().Set("Vary", "Accept-Encoding")
+		w.Header().Set("Cache-Control", "public, max-age=31557600")
 		fileServer.ServeHTTP(w, req)
 	case "POST":
 		req.ParseMultipartForm(32 << 40)
