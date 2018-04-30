@@ -1,6 +1,7 @@
 require 'digest/sha1'
 require 'mysql2'
 require 'sinatra/base'
+require 'net/http'
 
 class App < Sinatra::Base
   configure do
@@ -303,9 +304,12 @@ class App < Sinatra::Base
     end
 
     if !avatar_name.nil? && !avatar_data.nil?
-      statement = db.prepare('INSERT INTO image (name, data) VALUES (?, ?)')
-      statement.execute(avatar_name, avatar_data)
-      statement.close
+      req = Net::HTTP::Post.new("/icons/#{avatar_name}")
+      req.set_form([['image', avatar_data, { filename: "image" }]], 'multipart/form-data')
+      res = images_api.request(req)
+      if res.code >= '300'
+        return 500
+      end
       statement = db.prepare('UPDATE user SET avatar_icon = ? WHERE id = ?')
       statement.execute(avatar_name, user['id'])
       statement.close
@@ -322,19 +326,27 @@ class App < Sinatra::Base
 
   get '/icons/:file_name' do
     file_name = params[:file_name]
-    statement = db.prepare('SELECT * FROM image WHERE name = ?')
-    row = statement.execute(file_name).first
-    statement.close
+    req = Net::HTTP::Get.new("/icons/#{file_name}")
+    res = images_api.request(req)
+
     ext = file_name.include?('.') ? File.extname(file_name) : ''
     mime = ext2mime(ext)
-    if !row.nil? && !mime.empty?
+    if res.code < '300' && !mime.empty?
       content_type mime
-      return row['data']
+      return res.body
     end
     404
   end
 
   private
+
+  def images_api
+    return @images_api if defined?(@images_api)
+
+    uri = URI.parse(ENV.fetch('ISUBATA_IMAGE_URL') { 'http://localhost:8080' })
+    @images_api = Net::HTTP.new(uri.host, uri.port)
+    @images_api
+  end
 
   def db
     return @db_client if defined?(@db_client)
