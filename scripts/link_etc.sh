@@ -16,6 +16,7 @@ TARGETS=(
         /etc/nginx/conf.d
         /etc/nginx/sites-enabled
         /etc/nginx/sites-available
+        /etc/systemd/system/isubata.golang-image-server.service
 )
 
 for target in ${TARGETS[@]}
