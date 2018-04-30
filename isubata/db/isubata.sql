@@ -6,8 +6,6 @@ CREATE TABLE user (
   display_name TEXT,
   avatar_icon TEXT,
   created_at DATETIME NOT NULL,
-  INDEX name_idx(name),
-  INDEX id_idx(id)
 ) Engine=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE image (
@@ -30,8 +28,6 @@ CREATE TABLE message (
   user_id BIGINT,
   content TEXT,
   created_at DATETIME NOT NULL,
-  INDEX per_channel_idx(id, channel_id),
-  INDEX channel_id_idxidx(id, channel_id)
 ) Engine=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE haveread (
