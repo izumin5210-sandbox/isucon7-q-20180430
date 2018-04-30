@@ -2,4 +2,6 @@ ISUBATA_DB_HOST=localhost
 ISUBATA_DB_USER=isucon
 ISUBATA_DB_PASSWORD=isucon
 ISUBATA_IMAGE_URL=http://isu2:8080
+ISUBATA_FILE_ROOT=/home/isucon/isubata/webapp/public
 ENABLE_STACKPROF=1
+
