@@ -9,7 +9,8 @@ import (
 )
 
 var (
-	fileRoot string
+	fileRoot   string
+	fileServer http.Handler
 )
 
 func main() {
@@ -17,10 +18,11 @@ func main() {
 }
 
 func run() int {
-	fileRoot = os.Getenv("ISUCON_FILE_ROOT")
+	fileRoot = os.Getenv("ISUBATA_FILE_ROOT")
 	if fileRoot == "" {
-		fileRoot = "./data"
+		fileRoot = "data"
 	}
+	fileServer = http.FileServer(http.Dir(fileRoot))
 	err := http.ListenAndServe(":8080", http.HandlerFunc(handle))
 	if err != nil {
 		log.Printf("failed to shutdown server: %v", err)
@@ -30,24 +32,29 @@ func run() int {
 }
 
 func handle(w http.ResponseWriter, req *http.Request) {
+	log.Printf("%s %s", req.Method, req.URL.Path)
 	switch req.Method {
 	case "GET":
-		http.ServeFile(w, req, filepath.Join(fileRoot, req.URL.Path))
+		fileServer.ServeHTTP(w, req)
 	case "POST":
+		req.ParseMultipartForm(32 << 40)
 		src, _, err := req.FormFile("image")
 		if err != nil {
+			log.Printf("failed to open form: %v\n", err)
 			http.Error(w, err.Error(), http.StatusNotFound)
 			return
 		}
 		defer src.Close()
 		dst, err := os.Create(filepath.Join(fileRoot, req.URL.Path))
 		if err != nil {
+			log.Printf("failed to create file: %v\n", err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 		defer dst.Close()
 		_, err = io.Copy(dst, src)
 		if err != nil {
+			log.Printf("failed to copy file: %v\n", err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
